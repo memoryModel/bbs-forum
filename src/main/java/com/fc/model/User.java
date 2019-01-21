@@ -1,9 +1,12 @@
 package com.fc.model;
 
 
-public class User {
+import java.io.Serializable;
 
-    private Integer uid;
+public class User implements Serializable {
+
+    private static final long serialVersionUID = -2929063984063273706L;
+    private Long uid;
 
     //系统属性
     private String email;
@@ -29,15 +32,21 @@ public class User {
 
     public User() {}
 
-    public User(Integer uid) {
+    public User(Long uid) {
         this.uid = uid;
     }
 
-    public Integer getUid() {
+    public User(Long uid, String username, String headUrl) {
+        this.uid = uid;
+        this.username = username;
+        this.headUrl = headUrl;
+    }
+
+    public Long getUid() {
         return uid;
     }
 
-    public void setUid(Integer uid) {
+    public void setUid(Long uid) {
         this.uid = uid;
     }
 

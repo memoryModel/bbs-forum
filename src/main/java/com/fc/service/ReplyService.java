@@ -6,7 +6,7 @@ import com.fc.mapper.PostMapper;
 import com.fc.mapper.ReplyMapper;
 import com.fc.mapper.UserMapper;
 import com.fc.model.*;
-import com.fc.util.MyConstant;
+import com.fc.commons.util.MyConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
@@ -32,8 +32,13 @@ public class ReplyService {
     @Autowired
     private TaskExecutor taskExecutor;
 
-    //回复
-    public void reply(int sessionUid, int pid, String content) {
+    /**
+     * 回复
+     * @param sessionUid
+     * @param pid
+     * @param content
+     */
+    public void reply(Long sessionUid, Long pid, String content) {
         //构造Reply对象
         User user = new User(sessionUid);
         Post post = new Post(pid);
@@ -52,8 +57,14 @@ public class ReplyService {
 
     }
 
-    //评论
-    public void comment(int pid,int sessionUid, int rid, String content) {
+    /**
+     * 评论
+     * @param pid
+     * @param sessionUid
+     * @param rid
+     * @param content
+     */
+    public void comment(Long pid,Long sessionUid, int rid, String content) {
         //构造Comment
         User user = new User(sessionUid);
         Reply reply = new Reply(rid);
@@ -65,13 +76,17 @@ public class ReplyService {
         replyMapper.insertComment(comment);
         //更新最后回复时间
         postMapper.updateReplyTime(pid);
-        //插入一条评论消息
-        taskExecutor.execute(new MessageTask(messageMapper,userMapper,postMapper,replyMapper,pid,rid,sessionUid, MyConstant.OPERATION_COMMENT));
+        //TODO：插入一条评论消息
+        //taskExecutor.execute(new MessageTask(messageMapper,userMapper,postMapper,replyMapper,pid,rid,sessionUid, MyConstant.OPERATION_COMMENT));
 
     }
 
-    //根据pid列出回复
-    public List<Reply> listReply(int pid) {
+    /**
+     * 根据pid列出回复
+     * @param pid
+     * @return
+     */
+    public List<Reply> listReply(Long pid) {
         //列出回复
         List<Reply> replyList = replyMapper.listReply(pid);
         for(Reply reply : replyList){

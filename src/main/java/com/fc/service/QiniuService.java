@@ -2,7 +2,7 @@ package com.fc.service;
 
 import java.io.IOException;
 
-import com.fc.util.MyConstant;
+import com.fc.commons.util.MyConstant;
 import com.qiniu.http.Response;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;

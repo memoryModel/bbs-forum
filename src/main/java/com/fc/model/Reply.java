@@ -1,20 +1,34 @@
 package com.fc.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Reply {
+/**
+ * 答复
+ */
+public class Reply implements Serializable {
 
+    private static final long serialVersionUID = 3691478550106000423L;
     private Integer rid;
-    //回帖内容
+    /**
+     * 回帖内容
+     */
     private String content;
-    //两个外键，指向Post和User
+    /**
+     * 帖子
+     */
     private Post post;
+    /**
+     * 回帖用户
+     */
     private User user;
-
-    //回复时间
+    /**
+     * 回复时间
+     */
     private String replyTime;
-
-    //存储楼中楼的集合
+    /**
+     * 存储楼中楼的集合
+     */
     private List<Comment> commentList;
 
     public Reply() {}

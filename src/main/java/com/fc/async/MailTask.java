@@ -1,6 +1,6 @@
 package com.fc.async;
 
-import com.fc.util.MyConstant;
+import com.fc.commons.util.MyConstant;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;

@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>论坛</title>
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="css/wangEditor.css">
 	<link rel="stylesheet" type="text/css" href="css/base.css">
@@ -11,7 +11,7 @@
 </head>
 <body>
 <%@ include file="header.jsp" %>
-
+    <input type="hidden" name="hdPid" value="${post.pid}">
 
 	<!-- 中间主体板块 -->
 	<div class="main w clearfix">
@@ -224,17 +224,18 @@
     //点赞按钮处理
     var likeButton = $("#like-button");
     likeButton.click(function(){
+        var pid = $('[name="hdPid"]').val();
         $.ajax({
-            type:"GET",
+            type:"POST",
             url:"ajaxClickLike.do",
-            data:{pid:${post.pid}},
+            data:{pid:pid},
             success:function(response,status,xhr){
                 likeButton.text("赞 "+response);
                 likeButton.removeAttr("href");
             }
         });
     });
-    
+
 </script>
 </body>
 </html>

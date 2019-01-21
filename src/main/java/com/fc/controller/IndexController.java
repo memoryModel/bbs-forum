@@ -5,7 +5,7 @@ import com.fc.model.Post;
 import com.fc.model.User;
 import com.fc.service.PostService;
 import com.fc.service.UserService;
-import com.fc.util.MyConstant;
+import com.fc.commons.util.MyConstant;
 import com.fc.service.QiniuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,12 +41,12 @@ public class IndexController {
      * @return
      */
     @RequestMapping("/toIndex.do")
-    public String toIndex(Model model, HttpServletRequest request){
+    public String toIndex(Model model, HttpServletRequest request, Integer typeFlag){
         System.out.println(request.getRemoteAddr());
         //记录访问信息
         userService.record(request.getRequestURL(),request.getContextPath(),request.getRemoteAddr());
         //列出帖子
-        PageBean<Post> pageBean = postService.listPostByTime(1);
+        PageBean<Post> pageBean = postService.listPostByTime(1, typeFlag == null ?1:typeFlag);
         //列出用户
         List<User> userList = userService.listUserByTime();
         //列出活跃用户

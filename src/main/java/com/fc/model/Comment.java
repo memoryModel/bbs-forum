@@ -1,17 +1,26 @@
 package com.fc.model;
 
 
-public class Comment {
+import java.io.Serializable;
 
+public class Comment implements Serializable {
+
+    private static final long serialVersionUID = 8194620197668818771L;
     private Integer cid;
 
-    //评论内容
+    /**
+     * 评论内容
+     */
     private String content;
-    //两个外键，指向Reply和User
+    /**
+     * 两个外键，指向Reply和User
+     */
     private Reply reply;
     private User user;
 
-    //评论时间
+    /**
+     * 评论时间
+     */
     private String commentTime;
 
     public Comment() {}

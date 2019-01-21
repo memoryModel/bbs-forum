@@ -11,7 +11,7 @@ public interface ReplyMapper {
 
     void insertReply(Reply reply);
 
-    List<Reply> listReply(int pid);
+    List<Reply> listReply(Long pid);
 
     void insertComment(Comment comment);
 

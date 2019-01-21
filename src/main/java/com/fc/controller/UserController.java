@@ -5,11 +5,13 @@ import com.fc.model.User;
 import com.fc.service.PostService;
 import com.fc.service.QiniuService;
 import com.fc.service.UserService;
-import com.fc.util.MyConstant;
+import com.fc.commons.util.Config;
+import com.fc.commons.util.MyConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,7 +42,7 @@ public class UserController {
      */
     @RequestMapping("/toMyProfile.do")
     public String toMyProfile(HttpSession session,Model model) {
-        int sessionUid = (int) session.getAttribute("uid");
+        Long sessionUid = (Long) session.getAttribute("uid");
         User user = userService.getProfile(sessionUid, sessionUid);
         List<Post> postList =  postService.getPostList(sessionUid);
         model.addAttribute("user",user);
@@ -56,18 +58,19 @@ public class UserController {
      * @return
      */
     @RequestMapping("/toProfile.do")
-    public String toProfile(int uid,Model model,HttpSession session) {
+    public String toProfile(String uid,Model model,HttpSession session) {
         //如果是自己的页面，直接跳转到本人个人主页
-        int sessionUid = (int) session.getAttribute("uid");
-        if(sessionUid==uid){
+        Long sessionUid = (Long) session.getAttribute("uid");
+        if(uid.equals(sessionUid)){
             return "redirect:toMyProfile.do";
         }
+        Long longUid = Long.parseLong(uid);
         //判断是否关注当前用户
-        boolean following = userService.getFollowStatus(sessionUid,uid);
+        boolean following = userService.getFollowStatus(sessionUid,longUid);
         //获得用户信息
-        User user = userService.getProfile(sessionUid, uid);
+        User user = userService.getProfile(sessionUid, longUid);
         //获得发帖列表
-        List<Post> postList =  postService.getPostList(uid);
+        List<Post> postList =  postService.getPostList(longUid);
         //向模型中添加数据
         model.addAttribute("following",following);
         model.addAttribute("user",user);
@@ -130,9 +133,8 @@ public class UserController {
         return "prompt/afterForgetPassword";
     }
 
-
     @RequestMapping("/updateHeadUrl.do")
-    public String updateHeadUrl(MultipartFile myFileName,Model model,HttpSession session) throws IOException {
+    public String updateHeadUrl(MultipartFile myFileName,Model model,HttpSession session, @RequestParam(value = "file", required = false) MultipartFile files[]) throws IOException {
         // 文件类型限制
         String[] allowedType = {"image/bmp", "image/gif", "image/jpeg", "image/png"};
         boolean allowed = Arrays.asList(allowedType).contains(myFileName.getContentType());

@@ -3,7 +3,7 @@
 <mapper namespace="com.fc.mapper.ReplyMapper">
 
     <resultMap type="com.fc.model.User" id="userMap">
-        <id column="uid" property="uid"/>
+        <id column="uid" property="uid" javaType="java.lang.Long"/>
         <result column="username" property="username"/>
         <result column="head_url" property="headUrl"/>
     </resultMap>

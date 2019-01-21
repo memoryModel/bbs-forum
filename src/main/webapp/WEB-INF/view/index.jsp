@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>论坛</title>
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="css/base.css">
 </head>
@@ -21,9 +21,9 @@
 			<div class="post">
 				<div class="post-wrap">
 					<div class="post-choice">
-						<a href="#" class="post-choice-current">最近</a>
-						<a href="#">最热</a>
-						<a href="#" class="post-choice-last">精华</a>
+						<a href="#" id="recentlyId">最近</a>
+						<a href="#" id="livelyId">最热</a>
+						<a href="#" id="essenceId" class="post-choice-last">精华</a>
 					</div>
 
 					<ul class="post-list">
@@ -58,11 +58,11 @@
                     <nav class="col-md-10 col-md-offset-2">
                         <ul class="pagination pagination-sm">
                             <%--首页--%>
-                            <li><a href="listPostByTime.do?curPage=1">首页</a></li>
+                            <li><a href="javascript:" name="pageHref" pageNume="1">首页</a></li>
                             <%--上一页--%>
                             <c:choose>
                                 <c:when test="${pageBean.curPage!=1 }">
-                                    <li><a href="listPostByTime.do?curPage=${pageBean.curPage-1 }"><span>&laquo;</span></a></li>
+                                    <li><a href="javascript:;" name="pageHref" pageNume="${pageBean.curPage-1 }"><span>&laquo;</span></a></li>
                                 </c:when>
                                 <c:otherwise>
                                     <li><span>&laquo;</span></li>
@@ -72,36 +72,36 @@
                             <c:choose>
                                 <c:when test="${pageBean.allPage<=10 }">
                                     <c:forEach begin="1" end="${ pageBean.allPage}" var="i">
-                                        <li class="pageNum"><a href="listPostByTime.do?curPage=${i }">${i }</a></li>
+                                        <li class="pageNum"><a href="javascript:;" name="pageHref" pageNume="${i}">${i }</a></li>
                                     </c:forEach>
                                 </c:when>
                                 <c:when test="${pageBean.curPage<=5 }">
                                     <c:forEach begin="1" end="10" var="i">
-                                        <li class="pageNum"><a href="listPostByTime.do?curPage=${i }">${i }</a></li>
+                                        <li class="pageNum"><a href="javascript:;" name="pageHref" pageNume="${i}">${i }</a></li>
                                     </c:forEach>
                                 </c:when>
                                 <c:when test="${pageBean.allPage-pageBean.curPage<5 }">
                                     <c:forEach begin="${pageBean.allPage-9 }" end="${ pageBean.allPage}" var="i">
-                                        <li class="pageNum"><a href="listPostByTime.do?curPage=${i }">${i }</a></li>
+                                        <li class="pageNum"><a href="javascript:;" name="pageHref" pageNume="${i}">${i }</a></li>
                                     </c:forEach>
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach begin="${pageBean.curPage-4 }" end="${ pageBean.curPage+5}" var="i">
-                                        <li class="pageNum"><a href="listPostByTime.do?curPage=${i }">${i }</a></li>
+                                        <li class="pageNum"><a href="javascript:;" name="pageHref" pageNume="${i}">${i }</a></li>
                                     </c:forEach>
                                 </c:otherwise>
                             </c:choose>
                             <%--下一页--%>
                             <c:choose>
                                 <c:when test="${pageBean.curPage!=pageBean.allPage }">
-                                    <li><a href="listPostByTime.do?curPage=${pageBean.curPage+1 }"><span>&raquo;</span></a></li>
+                                    <li><a href="javascript:;" name="pageHref" pageNume="${pageBean.curPage+1}"><span>&raquo;</span></a></li>
                                 </c:when>
                                 <c:otherwise>
                                     <li><span>&raquo;</span></li>
                                 </c:otherwise>
                             </c:choose>
                             <%--尾页--%>
-                            <li><a href="listPostByTime.do?curPage=${pageBean.allPage}">尾页</a></li>
+                            <li><a href="javascript:;" name="pageHref" pageNume="${pageBean.allPage}">尾页</a></li>
                         </ul>
                     </nav>
 
@@ -141,6 +141,7 @@
 <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="js/base.js"></script>
 <script type="text/javascript">
+    var typeFlag = 1;
     $(function(){
         var curPage = ${pageBean.curPage};
         $(".pageNum").each(function(){
@@ -148,6 +149,43 @@
                 $(this).addClass("active");
             }
         });
+
+        //$("#recentlyId").addClass("post-choice-current");
+        // 最热
+        $('#livelyId').click(function () {
+            $(this).addClass("post-choice-current");
+            $("#recentlyId").removeClass("post-choice-current");
+            $("#essenceId").removeClass("post-choice-current");
+            typeFlag = 2;
+            window.location.href="listPost.do?curPage=1&typeFlag="+typeFlag;
+        })
+
+        // 最近
+        $('#recentlyId').click(function () {
+            $(this).addClass("post-choice-current");
+            $("#livelyId").removeClass("post-choice-current");
+            $("#essenceId").removeClass("post-choice-current");
+            typeFlag = 1;
+            window.location.href="listPost.do?curPage=1&typeFlag="+typeFlag;
+        })
+
+        // 精华
+        $('#essenceId').click(function () {
+            $(this).addClass("post-choice-current");
+            $("#livelyId").removeClass("post-choice-current");
+            $("#recentlyId").removeClass("post-choice-current");
+            typeFlag = 3;
+            window.location.href="listPost.do?curPage=1&typeFlag="+typeFlag;
+        })
+
+        $('#home_id').click(function () {
+            window.location.href="listPost.do?curPage=1&typeFlag="+typeFlag;
+        })
+
+        $('a[name="pageHref"]').click(function (){
+            var curPage = $(this).attr('pageNume');
+            window.location.href="listPost.do?curPage="+curPage+"&typeFlag="+typeFlag;
+        })
     });
 
 </script>

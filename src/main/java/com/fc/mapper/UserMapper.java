@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 
 public interface UserMapper {
@@ -16,16 +17,18 @@ public interface UserMapper {
 
     int selectActived(User user);
 
-    User selectUserByUid(int uid);
+    User selectUserByUid(Long uid);
+
+    List<User> selectUserByUids(List<String> users);
 
     //这里有点特殊
-    Integer selectUidByEmailAndPassword(User user);
+    Long selectUidByEmailAndPassword(User user);
 
     User selectEditInfo(int uid);
 
     void updateUser(User user);
 
-    void updatePostCount(Integer uid);
+    void updatePostCount(Long uid);
 
     void updateActived(String activateCode);
 
@@ -37,11 +40,11 @@ public interface UserMapper {
 
     void updateHeadUrl(@Param("uid") int uid, @Param("headUrl") String headUrl);
 
-    String selectHeadUrl(int uid);
+    String selectHeadUrl(Long uid);
 
-    void updateScanCount(int uid);
+    void updateScanCount(Long uid);
 
-    User selectUsernameByUid(int uid);
+    User selectUsernameByUid(Long uid);
 
     String selectPasswordByUid(int uid);
 
@@ -51,5 +54,7 @@ public interface UserMapper {
 
     void updatePasswordByActivateCode(String code);
 
+    List<User> getAllUser();
 
+    String randomMessage();
 }

@@ -4,13 +4,13 @@
 
 
     <resultMap type="com.fc.model.User" id="userMap">
-        <id column="uid" property="uid"></id>
+        <id column="uid" property="uid" javaType="java.lang.Long"></id>
         <result column="username" property="username"></result>
         <result column="head_url" property="headUrl"></result>
     </resultMap>
 
     <resultMap type="com.fc.model.Post" id="postMap">
-        <id column="pid" property="pid"/>
+        <id column="pid" property="pid" javaType="java.lang.Long"/>
         <result column="title" property="title"/>
         <result column="publish_time" property="publishTime"/>
         <result column="reply_time" property="replyTime"/>
@@ -21,7 +21,7 @@
     </resultMap>
 
     <resultMap type="com.fc.model.Post" id="post2Map">
-        <id column="pid" property="pid"/>
+        <id column="pid" property="pid" javaType="java.lang.Long"/>
         <result column="title" property="title"/>
         <result column="content" property="content"/>
         <result column="publish_time" property="publishTime"/>
@@ -38,11 +38,8 @@
     </select>
 
     <insert id="insertPost">
-        <selectKey resultType="int" order="AFTER" keyProperty="pid">
-            select last_insert_id() as pid
-        </selectKey>
-        insert into post(title,content,publish_time,reply_time,reply_count,like_count,scan_count,uid,tid)
-        values(#{title},#{content},#{publishTime},#{replyTime},#{replyCount},#{likeCount},#{scanCount},#{user.uid},#{topic.tid})
+        insert into post(pid,title,content,publish_time,reply_time,reply_count,like_count,scan_count,uid,tid)
+        values(#{pid},#{title},#{content},#{publishTime},#{replyTime},#{replyCount},#{likeCount},#{scanCount},#{user.uid},#{topic.tid})
     </insert>
 
     <select id="listPostByTime" resultMap="postMap">

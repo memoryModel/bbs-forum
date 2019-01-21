@@ -6,7 +6,7 @@ import com.fc.mapper.ReplyMapper;
 import com.fc.mapper.UserMapper;
 import com.fc.model.Message;
 import com.fc.model.User;
-import com.fc.util.MyConstant;
+import com.fc.commons.util.MyConstant;
 
 public class MessageTask implements Runnable {
 
@@ -14,12 +14,12 @@ public class MessageTask implements Runnable {
     private UserMapper userMapper;
     private PostMapper postMapper;
     private ReplyMapper replyMapper;
-    private int pid;
+    private Long pid;
     private int rid;
-    private int sessionUid;
+    private Long sessionUid;
     private int operation;
 
-    public MessageTask(MessageMapper messageMapper, UserMapper userMapper, PostMapper postMapper, ReplyMapper replyMapper, int pid, int rid, int sessionUid, int operation) {
+    public MessageTask(MessageMapper messageMapper, UserMapper userMapper, PostMapper postMapper, ReplyMapper replyMapper, Long pid, int rid, Long sessionUid, int operation) {
         this.messageMapper = messageMapper;
         this.userMapper = userMapper;
         this.postMapper = postMapper;

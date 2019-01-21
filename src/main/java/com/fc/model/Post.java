@@ -1,18 +1,44 @@
 package com.fc.model;
 
 
-public class Post {
-    private Integer pid;
-    //标题和内容
-    private String title;
-    private String content;
-    //两个时间
-    private String publishTime;
-    private String replyTime;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-    //三个数量
+public class Post {
+
+    /**
+     * ID
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long pid;
+    /**
+     * 标题
+     */
+    private String title;
+    /**
+     * 内容
+     */
+    private String content;
+    /**
+     * 发布时间
+     */
+    private String publishTime;
+    /**
+     * 最后回复时间
+     */
+    private String replyTime;
+    /**
+     * 回复数量
+     */
     private Integer replyCount;
+    /**
+     * 点赞数量
+     */
     private Integer likeCount;
+    /**
+     * 浏览数量
+     */
     private Integer scanCount;
 
     //两个外键
@@ -21,15 +47,15 @@ public class Post {
 
     public Post() {}
 
-    public Post(Integer pid) {
+    public Post(Long pid) {
         this.pid = pid;
     }
 
-    public Integer getPid() {
+    public Long getPid() {
         return pid;
     }
 
-    public void setPid(Integer pid) {
+    public void setPid(Long pid) {
         this.pid = pid;
     }
 

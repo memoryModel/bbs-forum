@@ -1,4 +1,4 @@
-package com.fc.util;
+package com.fc.commons.util;
 
 
 public class MyConstant {

@@ -33,7 +33,11 @@ public class PostController {
     private ReplyService replyService;
 
 
-    //去发帖的页面
+    /**
+     * 去发帖的页面
+     * @param model
+     * @return
+     */
     @RequestMapping("/toPublish.do")
     public String toPublish(Model model){
         List<Topic> topicList = topicService.listTopic();
@@ -41,18 +45,26 @@ public class PostController {
         return "publish";
     }
 
-    //发帖
+    /**
+     * 发帖
+     * @param post
+     * @return
+     */
     @RequestMapping("/publishPost.do")
     public String publishPost(Post post) {
-        int id = postService.publishPost(post);
+        Long id = postService.publishPost(post);
         return "redirect:toPost.do?pid="+id;
     }
 
-
-    //按时间，倒序，列出帖子
-    @RequestMapping("/listPostByTime.do")
-    public String listPostByTime(int curPage,Model model){
-        PageBean<Post> pageBean = postService.listPostByTime(curPage);
+    /**
+     * 按时间，倒序，列出帖子
+     * @param curPage
+     * @param model
+     * @return
+     */
+    @RequestMapping("/listPost.do")
+    public String listPost(int curPage,Model model, int typeFlag){
+        PageBean<Post> pageBean = postService.listPostByTime(curPage, Integer.valueOf(typeFlag) == null ? 1 : typeFlag);
         List<User> userList = userService.listUserByTime();
         List<User> hotUserList = userService.listUserByHot();
         model.addAttribute("pageBean",pageBean);
@@ -61,20 +73,25 @@ public class PostController {
         return "index";
     }
 
-    //去帖子详情页面
+    /**
+     * 去帖子详情页面
+     * @param pid
+     * @param model
+     * @param session
+     * @return
+     */
     @RequestMapping("/toPost.do")
-    public String toPost(int pid,Model model,HttpSession session){
-        Integer sessionUid = (Integer) session.getAttribute("uid");
+    public String toPost(Long pid,Model model,HttpSession session){
+        Long sessionUid = (Long) session.getAttribute("uid");
         //获取帖子信息
-        Post post = postService.getPostByPid(pid);
+        Post post = postService.getPostByPid(pid, sessionUid);
         //获取评论信息
         List<Reply> replyList = replyService.listReply(pid);
 
         //判断用户是否已经点赞
-
         boolean liked = false;
         if(sessionUid!=null){
-            liked = postService.getLikeStatus(pid,sessionUid);
+            liked = postService.getLikeStatus(pid,String.valueOf(sessionUid));
         }
         //向模型中添加数据
         model.addAttribute("post",post);
@@ -83,11 +100,16 @@ public class PostController {
         return "post";
     }
 
-    //异步点赞
+    /**
+     * 异步点赞
+     * @param pid
+     * @param session
+     * @return
+     */
     @RequestMapping(value = "/ajaxClickLike.do",produces = "text/plain;charset=UTF-8")
     public @ResponseBody
-    String ajaxClickLike(int pid, HttpSession session){
-        int sessionUid = (int) session.getAttribute("uid");
-        return postService.clickLike(pid,sessionUid);
+    String ajaxClickLike(String pid, HttpSession session){
+        Integer sessionUid = (Integer) session.getAttribute("uid");
+        return postService.clickLike(Long.parseLong(pid),sessionUid);
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public interface PostMapper {
 
 
-    List<Post> listPostByUid(int uid);
+    List<Post> listPostByUid(Long uid);
 
     int insertPost(Post post);
 
@@ -18,16 +18,16 @@ public interface PostMapper {
 
     int selectPostCount();
 
-    Post getPostByPid(int pid);
+    Post getPostByPid(Long pid);
 
-    void updateReplyCount(int pid);
+    void updateReplyCount(Long pid);
 
-    void updateScanCount(int pid);
+    void updateScanCount(Long pid);
 
-    void updateReplyTime(int pid);
+    void updateReplyTime(Long pid);
 
-    int getUidByPid(int pid);
+    int getUidByPid(Long pid);
 
-    String getTitleByPid(int pid);
+    String getTitleByPid(Long pid);
 
 }

@@ -18,17 +18,32 @@ public class ReplyController {
     @Autowired
     private ReplyService replyService;
 
+    /**
+     * 对于发帖的回复
+     * @param pid
+     * @param content
+     * @param session
+     * @return
+     */
     @RequestMapping("/reply.do")
-    public String reply(int pid, String content, HttpSession session){
-        int sessionUid = (int) session.getAttribute("uid");
-        replyService.reply(sessionUid,pid,content);
+    public String reply(Long pid, String content, HttpSession session){
+        Integer sessionUid = (Integer) session.getAttribute("uid");
+        replyService.reply(sessionUid.longValue(),pid,content);
         return "redirect:toPost.do?pid="+pid;
     }
 
+    /**
+     * 对于发帖回复的回复
+     * @param pid
+     * @param rid
+     * @param content
+     * @param session
+     * @return
+     */
     @RequestMapping("/comment.do")
-    public String comment(int pid,int rid, String content, HttpSession session){
-        int sessionUid = (int) session.getAttribute("uid");
-        replyService.comment(pid,sessionUid,rid,content);
+    public String comment(Long pid,int rid, String content, HttpSession session){
+        Integer sessionUid = (Integer) session.getAttribute("uid");
+        replyService.comment(pid,sessionUid.longValue(),rid,content);
         return "redirect:toPost.do?pid="+pid;
     }
 }

@@ -1,4 +1,4 @@
-package com.fc.util;
+package com.fc.commons.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,9 +13,5 @@ public class MyUtil {
 
     public static String createActivateCode(){
         return new Date().getTime() + UUID.randomUUID().toString().replace("-","");
-    }
-
-    public static void main(String[] args) {
-        System.out.println(createActivateCode().length());
     }
 }

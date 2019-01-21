@@ -28,7 +28,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
             }
         }
 
-        Integer uid =  (Integer)request.getSession().getAttribute("uid");
+        Long uid =  (Long)request.getSession().getAttribute("uid");
         if(uid != null) return true;
         request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
         return false;

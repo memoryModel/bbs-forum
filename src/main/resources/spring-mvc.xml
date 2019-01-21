@@ -45,17 +45,23 @@
                         <value>/login.do</value>
                         <value>/activate.do</value>
                         <value>/logout.do</value>
-                        <value>/toPost.do</value>
+                        <!--<value>/toPost.do</value>-->
                         <value>/listTopic.do</value>
                         <value>/listPostByTime.do</value>
                         <value>/forgetPassword.do</value>
                         <value>/afterForgetPassword.do</value>
                         <value>/verify.do</value>
-			<value>/listImage.do</value>
-
+			            <value>/listImage.do</value>
                     </list>
                 </property>
             </bean>
+        </mvc:interceptor>
+        <!-- 配置打印日志拦截器 -->
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <mvc:exclude-mapping path="/"/>
+            <mvc:exclude-mapping path="/login"/>
+            <bean class="com.fc.interceptor.LogInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>
 </beans>

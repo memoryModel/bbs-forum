@@ -1,14 +1,19 @@
 package com.fc.service;
 
 import com.fc.async.MailTask;
+import com.fc.commons.redis.RedisCluster;
+import com.fc.commons.redis.RedisKey;
+import com.fc.commons.util.DateUtils;
+import com.fc.commons.util.IdWorker;
 import com.fc.mapper.UserMapper;
 import com.fc.model.User;
-import com.fc.util.MyConstant;
-import com.fc.util.MyUtil;
+import com.fc.commons.util.MyConstant;
+import com.fc.commons.util.MyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,6 +32,8 @@ public class LoginService {
     private JavaMailSender javaMailSender;
     @Autowired
     private TaskExecutor taskExecutor;
+    @Autowired
+    private RedisCluster redis;
 
     //注册
     public String register(User user,String repassword) {
@@ -34,9 +41,9 @@ public class LoginService {
         //校验邮箱格式
         Pattern p = Pattern.compile("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\\.[a-zA-Z0-9_-]{2,3}){1,2})$");
         Matcher m = p.matcher(user.getEmail());
-        if(!m.matches()){
+        /*if(!m.matches()){
             return "邮箱格式有问题啊~";
-        }
+        }*/
 
         //校验密码长度
         p = Pattern.compile("^\\w{6,20}$");
@@ -56,30 +63,44 @@ public class LoginService {
             return "该邮箱已被注册~";
         }
 
-        //构造user，设置未激活
-        user.setActived(0);
+        //构造user，默认激活
+        user.setActived(1);
         String activateCode = MyUtil.createActivateCode();
         user.setActivateCode(activateCode);
-        user.setJoinTime(MyUtil.formatDate(new Date()));
+        user.setJoinTime(DateUtils.formatDateTime(new Date()));
         user.setUsername("DF"+new Random().nextInt(10000)+"号");
-        user.setHeadUrl(MyConstant.QINIU_IMAGE_URL +"head.jpg");
+        user.setHeadUrl(userMapper.randomMessage());
+        try {
+            user.setUid(IdWorker.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        //发送邮件
-        taskExecutor.execute(new MailTask(activateCode,user.getEmail(),javaMailSender,1));
+        // TODO:发送邮件
+        //taskExecutor.execute(new MailTask(activateCode,user.getEmail(),javaMailSender,1));
 
         //向数据库插入记录
         userMapper.insertUser(user);
 
+        // 将用户名、头像加入redis缓存中
+        redis.hset(RedisKey.USER_INFO+user.getUid(),"userName",user.getUsername());
+        redis.hset(RedisKey.USER_INFO+user.getUid(),"headUrl",user.getHeadUrl());
+
+        // 加入最近创建的用户zset集合中
+        redis.zadd(RedisKey.RECENT_USER_LIST,System.currentTimeMillis(),user.getUid()+"");
+
         return "ok";
     }
 
-
-
-    //登录
+    /**
+     * 登录
+     * @param user
+     * @return
+     */
     public Map<String,Object> login(User user) {
 
         Map<String,Object> map = new HashMap<>();
-        Integer uid = userMapper.selectUidByEmailAndPassword(user);
+        Long uid = userMapper.selectUidByEmailAndPassword(user);
         if(uid==null){
             map.put("status","no");
             map.put("error","用户名或密码错误~");
