@@ -34,10 +34,11 @@
     <!--配置拦截器 -->
     <mvc:interceptors>
         <mvc:interceptor>
-            <mvc:mapping path="/*" />
+            <mvc:mapping path="/**" />
             <bean class="com.fc.interceptor.LoginInterceptor">
                 <property name="excludedUrls">
                     <list>
+                        <value>/</value>
                         <value>/toIndex.do</value>
                         <value>/upload.do</value>
                         <value>/toLogin.do</value>

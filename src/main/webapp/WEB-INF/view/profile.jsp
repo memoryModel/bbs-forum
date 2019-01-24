@@ -52,16 +52,32 @@
 		</div>
 
 		<div class="m-right">
-			<div class="user-follow">
-				<div class="user-follow">关注了<span class="user-count">${user.followCount}</span>人</div>
-				<div class="user-follower">关注者<span class="user-count">${user.followerCount}</span>人</div>
-			</div>
-			<div class="user-attr">
-				<span class="user-like-count">获赞：${user.likeCount}</span>
-				<span class="user-post-count">发帖：${user.postCount}</span>
+			<div class="hot_user">
+				<div class="user-follow">
+					<div class="user-follow">关注了<span class="user-count">${user.followCount}</span>人</div>
+					<div class="user-follower">关注者<span class="user-count">${user.followerCount}</span>人</div>
+				</div>
+				<div class="user-attr">
+					<span class="user-like-count">获赞：${user.likeCount}</span>
+					<span class="user-post-count">发帖：${user.postCount}</span>
 
+				</div>
+				<div class="user-scan-count">个人主页被浏览${user.scanCount}次</div>
 			</div>
-			<div class="user-scan-count">个人主页被浏览${user.scanCount}次</div>
+			<div class="hot_user">
+				<div class="clearfix"><div class="user_title"><span></span>&nbsp;共同关注了</div></div>
+				<ul class="user_list">
+					<c:forEach items="${commonFollowList}" var="user">
+						<li class="clearfix">
+							<a href="toProfile.do?uid=${user.uid}" class="user_image"><img src="${user.headUrl}"></a>
+							<a href="toProfile.do?uid=${user.uid}" class="user_name">${user.username}</a>
+						</li>
+					</c:forEach>
+
+
+				</ul>
+			</div>
+
 		</div>
 
 	</div><!-- 主体结束 -->

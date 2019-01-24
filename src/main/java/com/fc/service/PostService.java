@@ -15,6 +15,7 @@ import com.fc.commons.util.DateUtils;
 import com.fc.commons.util.MyConstant;
 import com.fc.commons.util.MyUtil;
 import com.fc.model.User;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
@@ -77,8 +78,10 @@ public class PostService {
 
         //插入一条帖子记录
         postMapper.insertPost(post);
-        // 添加帖子记录到redis
-        redis.zadd(RedisKey.RECENTLY_POST_LIST,System.currentTimeMillis(),String.valueOf(post.getPid()));
+
+        //更新用户发帖量
+        userMapper.updatePostCount(post.getUser().getUid());
+        redis.hincrBy(RedisKey.USER_SIGNIFICANCE_INFO+post.getUser().getUid(),"postCount",1);
 
         // 将帖子相关详情添加到redis做缓存
         Map<String, String> postMap = new HashMap<>();
@@ -90,19 +93,25 @@ public class PostService {
         postMap.put("replyCount", post.getReplyCount()+"");
         postMap.put("likeCount", post.getLikeCount()+"");
         postMap.put("scanCount", post.getScanCount()+"");
-        User user = userMapper.selectUserByUid(post.getUser().getUid());
-        postMap.put("userName",user.getUsername());
-        postMap.put("headUrl",user.getHeadUrl());
         postMap.put("uid", post.getUser().getUid()+"");
         redis.hmset(RedisKey.POST_INFO+post.getPid(), postMap);
 
-        //更新用户发帖量
-        userMapper.updatePostCount(post.getUser().getUid());
+        // 最近
+        redis.zadd(RedisKey.RECENTLY_POST_LIST,System.currentTimeMillis(),String.valueOf(post.getPid()));
+        // 最热
+        redis.zadd(RedisKey.LIVELY_POST_LIST,0,post.getPid().toString());
+        // 精华
+        redis.zadd(RedisKey.ESSENCE_POST_LIST,0,post.getPid().toString());
 
         return post.getPid();
     }
 
-    //按时间列出帖子
+    /**
+     * 根据条件列出帖子
+     * @param curPage
+     * @param typeFlag
+     * @return
+     */
     public PageBean<Post> listPostByTime(int curPage, int typeFlag) {
         //每页记录数，从哪开始
         int limit = 8;
@@ -141,11 +150,17 @@ public class PostService {
             post.setLikeCount(Integer.valueOf(map.get("likeCount")));
             post.setReplyCount(Integer.valueOf(map.get("replyCount")));
             post.setScanCount(Integer.valueOf(map.get("scanCount")));
-            Map<String, String> userMap = redis.hgetall(RedisKey.USER_INFO+map.get("uid"));
-            User user = new User(Long.parseLong(map.get("uid")),userMap.get("userName"),userMap.get("headUrl"));
+            // 因论坛中用户名以及头像的出现频率最高。所以加入缓存
+            String userStr = redis.hget(RedisKey.USER_ALL_LIST,map.get("uid"));
+            JSONObject jsonObject=JSONObject.fromObject(userStr);
+            User user = (User) JSONObject.toBean(jsonObject, User.class);
+
+            /*Map<String, String> userMap = redis.hgetall(RedisKey.USER_INFO+map.get("uid"));
+            User user = new User(Long.parseLong(map.get("uid")),userMap.get("userName"),userMap.get("headUrl"));*/
             post.setUser(user);
             postList.add(post);
         }
+        // 获取点赞数
         for(Post post : postList){
             post.setLikeCount((int)(long)redis.scard(RedisKey.POST_LIKE+post.getPid()));
         }
@@ -162,19 +177,16 @@ public class PostService {
      * @return
      */
     public Post getPostByPid(Long pid, Long sessionUid) {
-        //更新浏览数
-        postMapper.updateScanCount(pid);
-
-        // 更新redis中浏览帖子的用户
-        redis.hincrBy(RedisKey.POST_INFO+pid,"scanCount",1);
-
-        // 如果当前浏览此帖子的用户已存在，则用户对此帖子的浏览次数+1
-        if (redis.hexists(RedisKey.POST_BROWSE_list+pid,sessionUid.toString()))
-            redis.hincrBy(RedisKey.POST_BROWSE_list+pid,String.valueOf(sessionUid),1);
-        else
-            redis.hset(RedisKey.POST_BROWSE_list+pid,String.valueOf(sessionUid),"1");
-
-        /*Post post =postMapper.getPostByPid(pid);*/
+        // 判断此用户是否浏览过此帖子 已浏览将不进行浏览数+1等操作
+        boolean isScan = getScanStatus(pid, String.valueOf(sessionUid));
+        if (!isScan) {
+            // 更新浏览数
+            postMapper.updateScanCount(pid);
+            // 更新redis中帖子浏览量
+            redis.hincrBy(RedisKey.POST_INFO+pid,"scanCount",1);
+            // 添加用户到帖子的已浏览用户set
+            redis.sadd(RedisKey.POST_BROWSE_LIST+pid,sessionUid.toString());
+        }
         Map<String, String> map = redis.hgetall(RedisKey.POST_INFO+pid);
         Post post = new Post();
         post.setPid(Long.parseLong(map.get("pid")));
@@ -185,13 +197,18 @@ public class PostService {
         post.setLikeCount(Integer.valueOf(map.get("likeCount")));
         post.setReplyCount(Integer.valueOf(map.get("replyCount")));
         post.setScanCount(Integer.valueOf(map.get("scanCount")));
-        User user = new User(Long.parseLong(map.get("uid")),map.get("userName"),map.get("headUrl"));
+        // 因论坛中用户名以及头像的出现频率最高。所以加入缓存
+        String userStr = redis.hget(RedisKey.USER_ALL_LIST,sessionUid.toString());
+        JSONObject jsonObject=JSONObject.fromObject(userStr);
+        User user = (User) JSONObject.toBean(jsonObject, User.class);
+        //Map<String, String> userMap = redis.hgetall(RedisKey.USER_INFO+map.get("uid"));
+        //User user = new User(Long.parseLong(map.get("uid")),userMap.get("userName"),userMap.get("headUrl"));
         post.setUser(user);
 
 
         //设置点赞数
-        long likeCount = redis.scard(RedisKey.POST_LIKE+pid);
-        post.setLikeCount((int)likeCount);
+        /*long likeCount = redis.scard(RedisKey.POST_LIKE+pid);
+        post.setLikeCount((int)likeCount);*/
 
         return post;
     }
@@ -202,11 +219,20 @@ public class PostService {
      * @param sessionUid
      * @return
      */
-    public String clickLike(Long pid, Integer sessionUid) {
-        //pid被sessionUid点赞
-        redis.sadd(RedisKey.POST_LIKE+pid, String.valueOf(sessionUid));
-        //增加用户获赞数
-        redis.hincrBy(RedisKey.POST_INFO+pid,"likeCount",1);
+    public String clickLike(Long pid, Long sessionUid, String postUserId) {
+        boolean ifLike = getLikeStatus(pid, String.valueOf(sessionUid));
+        if (!ifLike) {
+            // 帖子被sessionUid点赞
+            redis.sadd(RedisKey.POST_LIKE+pid, String.valueOf(sessionUid));
+            // 增加帖子获赞数
+            redis.hincrBy(RedisKey.POST_INFO+pid,"likeCount",1);
+            // 精华帖子集合中增加点赞量
+            redis.zincrby(RedisKey.ESSENCE_POST_LIST,1D,pid.toString());
+            // 用户增加1点获赞数 得到发帖人 点赞+1
+            /*String uid = redis.hget(RedisKey.POST_INFO+pid,"uid");
+            userMapper.updateLikeCountByUid(Long.parseLong(uid));*/
+            redis.hincrBy(RedisKey.USER_SIGNIFICANCE_INFO+postUserId,"likeCount",1);
+        }
 
         //TODO:插入一条点赞消息
         //taskExecutor.execute(new MessageTask(messageMapper,userMapper,postMapper,replyMapper,pid,0,sessionUid, MyConstant.OPERATION_CLICK_LIKE));
@@ -224,6 +250,26 @@ public class PostService {
     public boolean getLikeStatus(Long pid, String sessionUid) {
         boolean result = redis.sismember(RedisKey.POST_LIKE+pid, sessionUid);
         return result;
+    }
+
+    /**
+     * 某用户是否浏览过某帖子
+     * @param pid
+     * @param sessionUid
+     * @return
+     */
+    public boolean getScanStatus(Long pid, String sessionUid) {
+        boolean result = redis.sismember(RedisKey.POST_BROWSE_LIST+pid, sessionUid);
+        return result;
+    }
+
+    /**
+     * 根据用户id查询所有发帖id
+     * @param uid
+     * @return
+     */
+    public List<String> getPostListByUid(Long uid) {
+        return  postMapper.getPostListByUid(uid);
     }
 }
 

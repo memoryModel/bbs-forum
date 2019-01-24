@@ -23,11 +23,25 @@ public class User implements Serializable {
     private String school;
     private String job;
 
-    //附加属性
+    /**
+     * 发帖
+     */
     private Integer postCount;
+    /**
+     * 个人主页被浏览次数
+     */
     private Integer scanCount;
+    /**
+     * 所有获赞
+     */
     private Integer likeCount;
+    /**
+     * 关注了
+     */
     private Integer followCount;
+    /**
+     * 关注者
+     */
     private Integer followerCount;
 
     public User() {}

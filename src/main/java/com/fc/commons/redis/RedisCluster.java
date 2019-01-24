@@ -1,11 +1,13 @@
 package com.fc.commons.redis;
 
+import com.fc.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.*;
 
+import java.security.Key;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,12 +24,12 @@ public class RedisCluster {
 
     public RedisCluster() {
         Set<HostAndPort> clusterNodes = new HashSet<HostAndPort>();
-        clusterNodes.add(new HostAndPort("47.94.158.71", 7001));
-        clusterNodes.add(new HostAndPort("47.94.158.71", 7002));
-        clusterNodes.add(new HostAndPort("47.94.158.71", 7003));
-        clusterNodes.add(new HostAndPort("47.94.158.71", 7004));
-        clusterNodes.add(new HostAndPort("47.94.158.71", 7005));
-        clusterNodes.add(new HostAndPort("47.94.158.71", 7006));
+        clusterNodes.add(new HostAndPort("47.94.158.71", 9001));
+        clusterNodes.add(new HostAndPort("47.94.158.71", 9002));
+        clusterNodes.add(new HostAndPort("47.94.158.71", 9003));
+        clusterNodes.add(new HostAndPort("47.94.158.71", 9004));
+        clusterNodes.add(new HostAndPort("47.94.158.71", 9005));
+        clusterNodes.add(new HostAndPort("47.94.158.71", 9006));
 
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxTotal(50);//最大连接个数
@@ -133,6 +135,26 @@ public class RedisCluster {
             logger.error("redis sismember error.", ex);
         }
         return false;
+    }
+
+    /**
+     * 返回给定所有集合的交集
+     * */
+    public Set<String> sinter(String key1, String key2) {
+        try {
+            Set<String> result = new HashSet<String>();
+            Set<String> set1 = jedisCluster.smembers(key1);
+            Set<String> set2 = jedisCluster.smembers(key2);
+            if (set1== null || set2 == null) return null;
+            result.clear();
+            result.addAll(set1);
+            result.retainAll(set2);
+            return result;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            logger.error("redis sinter error.", ex);
+        }
+        return null;
     }
 
     /**
@@ -397,6 +419,19 @@ public class RedisCluster {
     }
 
     /**
+     * 对有序集合中指定成员的分数加上增量
+     * */
+    public Double zincrby(String key, Double score, String member) {
+        try {
+            return  jedisCluster.zincrby(key, score, member);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            logger.error("redis zincrby error.", ex);
+        }
+        return 0D;
+    }
+
+    /**
      * 将哈希表 key 中的域 field 的值设为 value
      * */
     public Long hset(String key, String field, String value){
@@ -528,16 +563,41 @@ public class RedisCluster {
     }
 
     /**
-     * 将一个或多个值插入到列表头部
+     * 将一个或多个值插入到列表左侧
      * */
-    public Long lphsh(String key, String... values) {
+    public Long lpush(String key, String... values) {
         try {
             return jedisCluster.lpush(key, values);
         }
         catch (Exception ex) {
-            logger.error("redis lphshx error.", ex);
+            logger.error("redis lpush error.", ex);
         }
         return 0L;
+    }
+
+    /**
+     * 将一个或多个值插入到列表右侧
+     * */
+    public Long rpush(String key, String... values) {
+        try {
+            return jedisCluster.rpush(key, values);
+        }
+        catch (Exception ex) {
+            logger.error("redis rpush error.", ex);
+        }
+        return 0L;
+    }
+
+    /**
+     * 获取列表指定范围内的元素
+     * */
+    public List<String> lrange(String key, long start, long end) {
+        try {
+            return jedisCluster.lrange(key,start,end);
+        } catch (Exception ex) {
+            logger.error("redis lrange error.", ex);
+        }
+        return null;
     }
 
     /**

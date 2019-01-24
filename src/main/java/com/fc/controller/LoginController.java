@@ -24,7 +24,7 @@ public class LoginController {
      * 去注册和登录的页面
      * @return
      */
-    @RequestMapping("/toLogin.do")
+    @RequestMapping({"/toLogin.do","/"})
     public String toLogin(){
         return "login";
     }
@@ -50,7 +50,6 @@ public class LoginController {
         }
     }
 
-
     /**
      * 登录
      * @param user
@@ -61,6 +60,7 @@ public class LoginController {
     @RequestMapping(value = "/login.do",method = RequestMethod.POST)
     public String login(User user,Model model,HttpSession session){
         Map<String,Object> map = loginService.login(user);
+
         if(map.get("status").equals("yes")){
             session.setAttribute("uid",map.get("uid"));
             session.setAttribute("headUrl",map.get("headUrl"));
@@ -72,10 +72,9 @@ public class LoginController {
         }
     }
 
-
     /**
      * 激活
-     * @param activateCode
+     * @param code
      * @param model
      * @return
      */
@@ -86,7 +85,6 @@ public class LoginController {
         model.addAttribute("info","您的账户已经激活成功，可以去登录啦~");
         return "prompt/promptInfo";
     }
-
 
     /**
      * 注销

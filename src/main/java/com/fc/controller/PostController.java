@@ -108,8 +108,8 @@ public class PostController {
      */
     @RequestMapping(value = "/ajaxClickLike.do",produces = "text/plain;charset=UTF-8")
     public @ResponseBody
-    String ajaxClickLike(String pid, HttpSession session){
-        Integer sessionUid = (Integer) session.getAttribute("uid");
-        return postService.clickLike(Long.parseLong(pid),sessionUid);
+    String ajaxClickLike(String pid, String postUserId, HttpSession session){
+        Long sessionUid = (Long) session.getAttribute("uid");
+        return postService.clickLike(Long.parseLong(pid),sessionUid, postUserId);
     }
 }

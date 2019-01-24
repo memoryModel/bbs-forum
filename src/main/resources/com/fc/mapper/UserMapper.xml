@@ -57,7 +57,7 @@
     </insert>
 
     <select id="listUserByTime" resultType="com.fc.model.User">
-        select uid,username,head_url from user order by join_time desc limit 6
+        select uid,username,head_url,join_time from user order by join_time desc limit 6
     </select>
 
     <select id="listUserByHot" resultType="com.fc.model.User">
@@ -102,6 +102,18 @@
 
     <select id="randomMessage" resultType="String">
         select image_url from image ORDER BY rand() limit 1;
+    </select>
+
+    <update id="updateLikeCountByUid" parameterType="java.lang.Long" >
+        update user set like_count = like_count + 1 where uid = #{uid}
+    </update>
+
+    <select id="getParentNetWork" resultType="com.fc.model.NetworkNode">
+        select * from t_network_node where parent_id = 0 and status = '1'
+    </select>
+
+    <select id="getByParentId" resultType="com.fc.model.NetworkNode" parameterType="String">
+        select * from t_network_node where parent_id = #{id} and status = '1'
     </select>
 </mapper>
 

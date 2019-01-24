@@ -9,7 +9,7 @@ import java.util.List;
 public class Reply implements Serializable {
 
     private static final long serialVersionUID = 3691478550106000423L;
-    private Integer rid;
+    private Long rid;
     /**
      * 回帖内容
      */
@@ -33,15 +33,15 @@ public class Reply implements Serializable {
 
     public Reply() {}
 
-    public Reply(Integer rid) {
+    public Reply(Long rid) {
         this.rid = rid;
     }
 
-    public Integer getRid() {
+    public Long getRid() {
         return rid;
     }
 
-    public void setRid(Integer rid) {
+    public void setRid(Long rid) {
         this.rid = rid;
     }
 

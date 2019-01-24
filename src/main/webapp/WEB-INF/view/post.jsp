@@ -12,6 +12,7 @@
 <body>
 <%@ include file="header.jsp" %>
     <input type="hidden" name="hdPid" value="${post.pid}">
+    <input type="hidden" name="post_user_id" value="${post.user.uid}">
 
 	<!-- 中间主体板块 -->
 	<div class="main w clearfix">
@@ -225,10 +226,11 @@
     var likeButton = $("#like-button");
     likeButton.click(function(){
         var pid = $('[name="hdPid"]').val();
+        var postUserId = $('[name="post_user_id"]').val();
         $.ajax({
             type:"POST",
             url:"ajaxClickLike.do",
-            data:{pid:pid},
+            data:{pid:pid,postUserId:postUserId},
             success:function(response,status,xhr){
                 likeButton.text("赞 "+response);
                 likeButton.removeAttr("href");

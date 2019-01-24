@@ -119,11 +119,8 @@ body{
 
 /*右部分*/
 .m-right{
-    border: 1px solid #ddd;
-    border-radius: 3px;
     width: 320px;
     float: right;
-    padding: 20px;
     line-height: 46px;
 }
 
@@ -151,8 +148,6 @@ body{
     background-color: #eee;
     color: #888;
 }
-
-
 
 
 

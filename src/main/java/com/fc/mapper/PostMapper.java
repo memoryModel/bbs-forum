@@ -30,4 +30,10 @@ public interface PostMapper {
 
     String getTitleByPid(Long pid);
 
+    /**
+     * 根据用户id查询所有发帖id
+     * @param uid
+     * @return
+     */
+    List<String> getPostListByUid(Long uid);
 }

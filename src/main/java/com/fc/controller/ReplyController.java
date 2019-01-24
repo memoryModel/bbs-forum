@@ -27,8 +27,8 @@ public class ReplyController {
      */
     @RequestMapping("/reply.do")
     public String reply(Long pid, String content, HttpSession session){
-        Integer sessionUid = (Integer) session.getAttribute("uid");
-        replyService.reply(sessionUid.longValue(),pid,content);
+        Long sessionUid = (Long) session.getAttribute("uid");
+        replyService.reply(sessionUid,pid,content);
         return "redirect:toPost.do?pid="+pid;
     }
 
@@ -41,9 +41,9 @@ public class ReplyController {
      * @return
      */
     @RequestMapping("/comment.do")
-    public String comment(Long pid,int rid, String content, HttpSession session){
-        Integer sessionUid = (Integer) session.getAttribute("uid");
-        replyService.comment(pid,sessionUid.longValue(),rid,content);
+    public String comment(Long pid,String rid, String content, HttpSession session){
+        Long sessionUid = (Long) session.getAttribute("uid");
+        replyService.comment(pid,sessionUid,Long.parseLong(rid),content);
         return "redirect:toPost.do?pid="+pid;
     }
 }

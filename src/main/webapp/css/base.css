@@ -556,6 +556,43 @@ body{
     background-color: #333;
 }
 
+.hot_user{
+    padding: 0 10px 14px;
+    border: 1px solid #E0E0E0;
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+.user_title span{
+    display: inline-block;
+    position: relative;
+    top: -2px;
+    height: 8px;
+    width: 8px;
+    background-color: #FF6547;
+}
+.user_image{
+    float: left;
+}
+.user_image img{
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+}
+.user_name{
+    float: right;
+    font: 14px/40px "微软雅黑";
+    color: #FF6547;
+}
+
+.user_list li{
+    border-top:1px dashed #E0E0E0;
+    padding: 6px 0;
+}
+
+
+
+
 
 
 

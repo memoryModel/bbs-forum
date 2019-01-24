@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fc.mapper.PostMapper">
 
-
     <resultMap type="com.fc.model.User" id="userMap">
         <id column="uid" property="uid" javaType="java.lang.Long"></id>
         <result column="username" property="username"></result>
@@ -31,7 +30,6 @@
         <result column="scan_count" property="scanCount"/>
         <association property="user" javaType="com.fc.model.User" resultMap="userMap" />
     </resultMap>
-
 
     <select id="listPostByUid" resultType="com.fc.model.Post">
         select uid,pid,title,publish_time from post where uid=#{uid}
@@ -77,6 +75,10 @@
 
     <select id="getTitleByPid" resultType="String">
         select title from post where pid=#{pid}
+    </select>
+
+    <select id="getPostListByUid" parameterType="java.lang.Long" resultType="java.lang.String" >
+        select pid from post where uid = #{uid}
     </select>
 </mapper>
 

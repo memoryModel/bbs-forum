@@ -1,6 +1,7 @@
 package com.fc.mapper;
 
 import com.fc.model.Info;
+import com.fc.model.NetworkNode;
 import com.fc.model.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,7 @@ public interface UserMapper {
     //这里有点特殊
     Long selectUidByEmailAndPassword(User user);
 
-    User selectEditInfo(int uid);
+    User selectEditInfo(Long uid);
 
     void updateUser(User user);
 
@@ -57,4 +58,10 @@ public interface UserMapper {
     List<User> getAllUser();
 
     String randomMessage();
+
+    void updateLikeCountByUid(Long uid);
+
+    List<NetworkNode> getParentNetWork(String userId);
+
+    List<NetworkNode> getByParentId(String id);
 }

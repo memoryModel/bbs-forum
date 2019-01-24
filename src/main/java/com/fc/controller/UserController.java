@@ -7,6 +7,7 @@ import com.fc.service.QiniuService;
 import com.fc.service.UserService;
 import com.fc.commons.util.Config;
 import com.fc.commons.util.MyConstant;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,15 +66,21 @@ public class UserController {
             return "redirect:toMyProfile.do";
         }
         Long longUid = Long.parseLong(uid);
-        //判断是否关注当前用户
+        // 判断是否关注当前用户
         boolean following = userService.getFollowStatus(sessionUid,longUid);
-        //获得用户信息
+        // 获得用户信息
         User user = userService.getProfile(sessionUid, longUid);
-        //获得发帖列表
+        // 获得发帖列表
         List<Post> postList =  postService.getPostList(longUid);
+        // 获得两人的共同关注人  主页不是自己时触发
+        if (!String.valueOf(sessionUid).equals(uid)) {
+            List<User> commonFollowList = userService.commonFollowList(sessionUid, uid);
+            model.addAttribute("commonFollowList",commonFollowList);
+        }
         //向模型中添加数据
         model.addAttribute("following",following);
         model.addAttribute("user",user);
+
         model.addAttribute("postList",postList);
         return "profile";
     }
@@ -87,7 +94,7 @@ public class UserController {
      */
     @RequestMapping("/toEditProfile.do")
     public String toEditProfile(HttpSession session,Model model){
-        int uid = (int) session.getAttribute("uid");
+        Long uid = (Long) session.getAttribute("uid");
         User user = userService.getEditInfo(uid);
         model.addAttribute("user",user);
         return "editProfile";
@@ -100,7 +107,6 @@ public class UserController {
      */
     @RequestMapping("/editProfile.do")
     public String editProfile(User user){
-        System.out.println(user);
         userService.updateUser(user);
         return "redirect:toMyProfile.do";
     }
@@ -163,17 +169,17 @@ public class UserController {
     }
 
     @RequestMapping("/follow.do")
-    public String follow(int uid,HttpSession session){
-        int sessionUid = (int) session.getAttribute("uid");
+    public String follow(String uid,HttpSession session){
+        Long sessionUid = (Long) session.getAttribute("uid");
         userService.follow(sessionUid,uid);
-        return "forward:toProfile.do";
+        return "redirect:toProfile.do?uid="+uid;
     }
 
     @RequestMapping("/unfollow.do")
-    public String unfollow(int uid,HttpSession session){
-        int sessionUid = (int) session.getAttribute("uid");
+    public String unfollow(String uid,HttpSession session){
+        Long sessionUid = (Long) session.getAttribute("uid");
         userService.unfollow(sessionUid,uid);
-        return "forward:toProfile.do";
+        return "redirect:toProfile.do?uid="+uid;
     }
 
 
@@ -182,5 +188,6 @@ public class UserController {
         userService.verifyForgetPassword(code);
         return "redirect:toLogin.do";
     }
+
 }
 

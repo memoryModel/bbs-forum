@@ -6,7 +6,7 @@ import java.io.Serializable;
 public class Comment implements Serializable {
 
     private static final long serialVersionUID = 8194620197668818771L;
-    private Integer cid;
+    private Long cid;
 
     /**
      * 评论内容
@@ -25,11 +25,11 @@ public class Comment implements Serializable {
 
     public Comment() {}
 
-    public Integer getCid() {
+    public Long getCid() {
         return cid;
     }
 
-    public void setCid(Integer cid) {
+    public void setCid(Long cid) {
         this.cid = cid;
     }
 
