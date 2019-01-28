@@ -141,7 +141,7 @@
 <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="js/base.js"></script>
 <script type="text/javascript">
-    var typeFlag = 1;
+    var typeFlag = ${typeFlag};
     $(function(){
         var curPage = ${pageBean.curPage};
         $(".pageNum").each(function(){
@@ -150,30 +150,37 @@
             }
         });
 
-        //$("#recentlyId").addClass("post-choice-current");
+        switch (typeFlag) {
+            case 1:
+                $('#recentlyId').addClass("post-choice-current");
+                $("#livelyId").removeClass("post-choice-current");
+                $("#essenceId").removeClass("post-choice-current");
+                break;
+            case 2:
+                $('#livelyId').addClass("post-choice-current");
+                $("#recentlyId").removeClass("post-choice-current");
+                $("#essenceId").removeClass("post-choice-current");
+                break;
+            case 3:
+                $('#essenceId').addClass("post-choice-current");
+                $("#livelyId").removeClass("post-choice-current");
+                $("#recentlyId").removeClass("post-choice-current");
+                break;
+        }
         // 最热
         $('#livelyId').click(function () {
-            $(this).addClass("post-choice-current");
-            $("#recentlyId").removeClass("post-choice-current");
-            $("#essenceId").removeClass("post-choice-current");
             typeFlag = 2;
             window.location.href="listPost.do?curPage=1&typeFlag="+typeFlag;
         })
 
         // 最近
         $('#recentlyId').click(function () {
-            $(this).addClass("post-choice-current");
-            $("#livelyId").removeClass("post-choice-current");
-            $("#essenceId").removeClass("post-choice-current");
             typeFlag = 1;
             window.location.href="listPost.do?curPage=1&typeFlag="+typeFlag;
         })
 
         // 精华
         $('#essenceId').click(function () {
-            $(this).addClass("post-choice-current");
-            $("#livelyId").removeClass("post-choice-current");
-            $("#recentlyId").removeClass("post-choice-current");
             typeFlag = 3;
             window.location.href="listPost.do?curPage=1&typeFlag="+typeFlag;
         })

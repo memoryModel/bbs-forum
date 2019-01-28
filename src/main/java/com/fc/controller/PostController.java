@@ -8,6 +8,7 @@ import com.fc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import redis.clients.jedis.Jedis;
@@ -63,7 +64,7 @@ public class PostController {
      * @return
      */
     @RequestMapping("/listPost.do")
-    public String listPost(int curPage,Model model, int typeFlag){
+    public String listPost(int curPage,Model model, @ModelAttribute("typeFlag") Integer typeFlag){
         PageBean<Post> pageBean = postService.listPostByTime(curPage, Integer.valueOf(typeFlag) == null ? 1 : typeFlag);
         List<User> userList = userService.listUserByTime();
         List<User> hotUserList = userService.listUserByHot();
