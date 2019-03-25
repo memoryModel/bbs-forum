@@ -3,21 +3,36 @@ package com.fc.controller;
 
 import com.fc.model.User;
 import com.fc.service.LoginService;
+import com.fc.TransactionTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+/**
+ * Demo class
+ *
+ * @author mac
+ * @date 2016/10/31
+ */
 @Controller
 @RequestMapping("/")
 public class LoginController {
 
+
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private TransactionTest transactionTest;
 
 
     /**
@@ -81,13 +96,15 @@ public class LoginController {
     @RequestMapping(value = "/activate.do")
     public String activate(String code,Model model){
         loginService.activate(code);
+        loginService.toString();
+
 
         model.addAttribute("info","您的账户已经激活成功，可以去登录啦~");
         return "prompt/promptInfo";
     }
 
     /**
-     * 注销
+     * 注销注销可能是的吧
      * @param session
      * @return
      */
@@ -95,6 +112,56 @@ public class LoginController {
     public String logout(HttpSession session) {
         session.removeAttribute("uid");
         return "redirect:toIndex.do";
+    }
+
+    @Deprecated
+    @RequestMapping("/testPool.do")
+    public @ResponseBody String test(HttpServletRequest request) {
+
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        for (int i = 0; i < 10000; i++) {
+            executorService.execute(() -> {
+                System.out.println("当前执行线程:" + Thread.currentThread().getName());
+            });
+        }
+
+        return "success";
+    }
+
+    @RequestMapping("/test1.do")
+    public @ResponseBody String testSynchronized() {
+
+        for (int i = 0; i < 800; i++) {
+            /*new Thread(() -> {
+                try {
+                    loginService.updateLikeCount();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();*/
+
+        }
+
+        loginService.updateTest();
+
+        //transactionTest.test();
+        return "success";
+    }
+
+    @RequestMapping("/test2.do")
+    public @ResponseBody String test2() {
+
+        //loginService.updateTest();
+
+        transactionTest.saveTest();
+        return "success";
+    }
+
+    @RequestMapping("/test3.do")
+    public @ResponseBody String test3() {
+
+        loginService.updateLikeCount();
+        return "success";
     }
 }
 

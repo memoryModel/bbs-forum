@@ -15,15 +15,6 @@
 
     <context:property-placeholder location="classpath:*.properties"/>
 
-    <!--数据源-->
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-		<property name="url" value="${mysql.url}" />
-		<property name="driverClassName" value="${mysql.driverClassName}" />
-		<property name="username" value="${mysql.username}" />
-        <!--MySQL密码-->
-		<property name="password" value="${mysql.password}" />
-	</bean>
-
     <!-- Redis连接池的配置 -->
     <!--<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig" >
         <property name="maxTotal" value="${redis.pool.maxActive}"/>
@@ -54,13 +45,46 @@
         </property>
     </bean>
 
-    <!--注解，声明式事务-->
-    <tx:annotation-driven transaction-manager="transactionManager" />
+    <!--数据源-->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="${mysql.url}" />
+        <property name="driverClassName" value="${mysql.driverClassName}" />
+        <property name="username" value="${mysql.username}" />
+        <!--MySQL密码-->
+        <property name="password" value="${mysql.password}" />
+    </bean>
+
     <!--事务管理器-->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager ">
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
 
+    <!--<tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="save*" />
+            <tx:method name="insert*" />
+            <tx:method name="update*" />
+            <tx:method name="delete*" />
+            <tx:method name="get*" read-only="true" />
+            <tx:method name="select*" read-only="true" />
+            <tx:method name="query*" read-only="true" />
+            <tx:method name="find*" read-only="true" />
+            <tx:method name="*"  />
+        </tx:attributes>
+    </tx:advice>
+
+    &lt;!&ndash; 3 AOP编程，利用切入点表达式从目标类方法中 确定增强的连接器，从而获得切入点 &ndash;&gt;
+    <aop:config>
+        <aop:pointcut id="pointcutId" expression="execution(* com.fc.service.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pointcutId" />
+    </aop:config>-->
+
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+
+    <!-- 创建模板 -->
+    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager"></property>
+    </bean>
 
     <!-- session工厂 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">

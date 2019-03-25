@@ -12,7 +12,6 @@
 <body>
 <%@ include file="header.jsp" %>
 
-
 	<!-- 中间主体板块 -->
 	<div class="main w clearfix">
 		<div class="m-left">
@@ -28,6 +27,10 @@
 			<div class="user-button">
                 <a href="toEditProfile.do" class="button-follow">编辑信息</a>
 			</div>
+			<%--<br/>
+			<div class="user-button">
+				<a href="javascript:;" id="test-id" class="button-follow">操作成功</a>
+			</div>--%>
 
 			<div class="user-post">
 				<div class="user-post-title"><span></span>&nbsp;发帖</div>
@@ -57,10 +60,22 @@
 		</div>
 
 	</div><!-- 主体结束 -->
-
 <%@ include file="footer.jsp" %>
 <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="js/base.js"></script>
+<script type="text/javascript">
+	$('#test-id').click(function () {
+		$.ajax({
+            type:"POST",
+            url:"./studentTest.do",
+            data:{},
+            contentType:"application/x-www-form-urlencoded; charset=utf-8",
+            success:function(data){
+			}
+
+		})
+	})
+</script>
 </body>
 </html>
 

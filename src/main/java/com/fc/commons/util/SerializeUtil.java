@@ -1,4 +1,4 @@
-package com.fc.commons.redis;
+package com.fc.commons.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

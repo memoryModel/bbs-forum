@@ -1,13 +1,12 @@
 package com.fc.commons.redis;
 
-import com.fc.model.User;
+import com.fc.commons.util.SerializeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.*;
 
-import java.security.Key;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +70,13 @@ public class RedisCluster {
         catch (Exception ex) {
             logger.error("redis get error.", ex);
         }
+       /* finally {
+            try {
+                jedisCluster.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }*/
         return defaultValue;
     }
 

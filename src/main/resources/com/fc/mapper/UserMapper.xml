@@ -115,6 +115,13 @@
     <select id="getByParentId" resultType="com.fc.model.NetworkNode" parameterType="String">
         select * from t_network_node where parent_id = #{id} and status = '1'
     </select>
+    <select id="getUserByUid" resultType="com.fc.model.User">
+        select * from user where uid = #{uid}
+    </select>
+
+    <update id="updateLikeCount">
+        update user set like_count = #{likeCount} where uid = #{uid}
+    </update>
 </mapper>
 
 

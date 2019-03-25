@@ -15,8 +15,9 @@
 		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
-    <context:component-scan base-package="com.fc"/>
-    <mvc:annotation-driven/>
+    <context:component-scan base-package="com.fc" />
+    <mvc:annotation-driven />
+    <aop:aspectj-autoproxy />
 
     <!--上传文件-->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
@@ -53,6 +54,10 @@
                         <value>/afterForgetPassword.do</value>
                         <value>/verify.do</value>
 			            <value>/listImage.do</value>
+                        <!-- 测试 -->
+			            <value>/test1.do</value>
+			            <value>/test2.do</value>
+			            <value>/test3.do</value>
                     </list>
                 </property>
             </bean>

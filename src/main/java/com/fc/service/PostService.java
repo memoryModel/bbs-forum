@@ -234,8 +234,8 @@ public class PostService {
             redis.hincrBy(RedisKey.USER_SIGNIFICANCE_INFO+postUserId,"likeCount",1);
         }
 
-        //TODO:插入一条点赞消息
-        //taskExecutor.execute(new MessageTask(messageMapper,userMapper,postMapper,replyMapper,pid,0,sessionUid, MyConstant.OPERATION_CLICK_LIKE));
+        // 插入一条点赞消息
+        taskExecutor.execute(new MessageTask(messageMapper,userMapper,postMapper,replyMapper,pid,0,sessionUid, MyConstant.OPERATION_CLICK_LIKE));
         String result = String.valueOf(redis.scard(RedisKey.POST_LIKE+pid));
 
         return result;

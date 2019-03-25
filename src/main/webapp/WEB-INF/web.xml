@@ -17,6 +17,7 @@
             <param-value>utf-8</param-value>
         </init-param>
     </filter>
+
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -25,7 +26,6 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-
 
     <servlet>
         <servlet-name>spring-mvc</servlet-name>
@@ -41,5 +41,9 @@
         <servlet-name>spring-mvc</servlet-name>
         <url-pattern>*.do</url-pattern>
     </servlet-mapping>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
 
 </web-app>

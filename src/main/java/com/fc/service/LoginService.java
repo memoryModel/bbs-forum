@@ -9,17 +9,28 @@ import com.fc.model.User;
 import com.fc.commons.util.MyUtil;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.springframework.transaction.annotation.Isolation.REPEATABLE_READ;
+
 @Service
 public class LoginService {
-
 
     @Autowired
     private UserMapper userMapper;
@@ -29,6 +40,9 @@ public class LoginService {
     private TaskExecutor taskExecutor;
     @Autowired
     private RedisCluster redis;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
     //注册
     public String register(User user,String repassword) {
@@ -140,4 +154,45 @@ public class LoginService {
         userMapper.updateActived(activateCode);
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public  void updateLikeCount() {
+        /*synchronized (this) {
+
+        }*/
+
+        User user = userMapper.getUserByUid(604779243695509504L);
+        user.setLikeCount(user.getLikeCount() + 1);
+        userMapper.updateLikeCount(user);
+    }
+
+    public void updateTest() {
+
+        /*transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                User user = userMapper.getUserByUid(604779243695509504L);
+                user.setLikeCount(user.getLikeCount() + 1);
+                userMapper.updateLikeCount(user);
+
+                int i = 1/0;
+
+                System.out.println("哈哈");
+
+                userMapper.updateScanCount(604779243695509504L);
+            }
+        });*/
+
+        User user = userMapper.getUserByUid(604779243695509504L);
+        user.setLikeCount(user.getLikeCount() + 1);
+        userMapper.updateLikeCount(user);
+
+        int i = 1/0;
+
+        System.out.println("哈哈");
+
+        userMapper.updateScanCount(604779243695509504L);
+
+
+
+    }
 }

@@ -10,7 +10,7 @@ public interface MessageMapper {
 
     void insertMessage(Message message);
 
-    List<Message> listMessageByUid(Integer uid);
+    List<Message> listMessageByUid(Long uid);
 
 
 }

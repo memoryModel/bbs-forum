@@ -11,6 +11,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import java.util.List;
 
+/**
+ * @author singleton
+ */
 public class LoginInterceptor extends HandlerInterceptorAdapter{
 
     private List<String> excludedUrls;
@@ -29,7 +32,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
         }
 
         Long uid =  (Long)request.getSession().getAttribute("uid");
-        if(uid != null) return true;
+        if(uid != null) {
+            return true;
+        }
         request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
         return false;
     }

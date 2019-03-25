@@ -16,7 +16,7 @@ public class MessageService {
     private MessageMapper messageMapper;
 
     //获得消息列表
-    public Map<String, List<Message>> listMessageByUid(Integer sessionUid) {
+    public Map<String, List<Message>> listMessageByUid(Long sessionUid) {
         List<Message> messageList = messageMapper.listMessageByUid(sessionUid);
         Map<String, List<Message>> map = new HashMap<>();
         for(Message message : messageList){

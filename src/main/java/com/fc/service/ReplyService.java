@@ -84,8 +84,8 @@ public class ReplyService {
         // 将redis中的数据进行更新
         updateRedisInfo(pid);
 
-        //TODO： 插入一条回复消息
-        //taskExecutor.execute(new MessageTask(messageMapper,userMapper,postMapper,replyMapper,pid,0,sessionUid, MyConstant.OPERATION_REPLY));
+        //插入一条回复消息
+        taskExecutor.execute(new MessageTask(messageMapper,userMapper,postMapper,replyMapper,pid,0,sessionUid, MyConstant.OPERATION_REPLY));
 
     }
 

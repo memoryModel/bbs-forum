@@ -64,4 +64,9 @@ public interface UserMapper {
     List<NetworkNode> getParentNetWork(String userId);
 
     List<NetworkNode> getByParentId(String id);
+
+    @Deprecated
+    void updateLikeCount(User user);
+
+    User getUserByUid(Long uid);
 }
