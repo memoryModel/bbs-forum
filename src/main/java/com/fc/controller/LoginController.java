@@ -3,7 +3,7 @@ package com.fc.controller;
 
 import com.fc.model.User;
 import com.fc.service.LoginService;
-import com.fc.TransactionTest;
+import com.fc.service.TransactionTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

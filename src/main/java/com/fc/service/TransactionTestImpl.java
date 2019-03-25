@@ -1,6 +1,5 @@
 package com.fc.service;
 
-import com.fc.TransactionTest;
 import com.fc.mapper.UserMapper;
 import com.fc.model.User;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.fc;
+package com.fc.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
